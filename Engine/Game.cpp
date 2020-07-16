@@ -24,8 +24,15 @@
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd )
+	gfx( wnd ),
+	hanoi(gfx)
 {
+	for (int i = 0; i < 4; i++)
+	{
+		//test layout
+		hanoi.steps.push_back({0, 0, 0, 0, 0, 0, 0});
+	}
+	hanoi.LoadNextStep(); 
 }
 
 void Game::Go()
@@ -42,4 +49,5 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
+	hanoi.Draw(gfx);
 }
