@@ -27,12 +27,6 @@ Game::Game( MainWindow& wnd )
 	gfx( wnd ),
 	hanoi(gfx)
 {
-	for (int i = 0; i < 4; i++)
-	{
-		//test layout
-		hanoi.steps.push_back({0, 0, 0, 0, 0, 0, 0});
-	}
-	hanoi.LoadNextStep(); 
 }
 
 void Game::Go()
@@ -45,6 +39,18 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	if (wnd.kbd.KeyIsPressed(VK_RIGHT) && timer.GetTimeSinceLastRefresh() > 0.3f && hanoi.GetCS() < hanoi.GetMaxStep())
+	{
+		hanoi.ChangeCurrentStep(1);
+		hanoi.LoadStep();
+		timer.ResetClock();
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_LEFT) && timer.GetTimeSinceLastRefresh() > 0.3f && hanoi.GetCS() > 0)
+	{
+		hanoi.ChangeCurrentStep(-1);
+		hanoi.LoadStep();
+		timer.ResetClock();
+	}
 }
 
 void Game::ComposeFrame()
