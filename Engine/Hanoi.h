@@ -8,7 +8,7 @@
 
 class Hanoi
 {
-	//number of disks
+	//number of disks (in bicolor modes it covers col0 + col1)
 	static constexpr int nDisks = 7;
 	//
 
@@ -29,8 +29,8 @@ private:
 	public:
 		int x;
 		int index;
-		std::array <int, nDisks> highestPegI;
-		int currentHeight = 0;
+		std::vector <int> highestPegI;
+		int currentHeight;
 	};
 
 public:
@@ -43,9 +43,10 @@ public:
 private:
 	void FromAToB(Peg& A, Peg& B);
 	void NormalHanoi(int n, Peg& A, Peg& B, Peg& Via);
+
 private:
-	std::vector <std::array<int, nDisks>> steps;
-	int currentStep = 0;
+	std::vector <std::array<int, 2>> steps;
+	int currentStep = -1;
 	Disk disks[nDisks];
 	Peg pegs[3];
 

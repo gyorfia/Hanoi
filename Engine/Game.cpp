@@ -45,7 +45,7 @@ void Game::UpdateModel()
 		hanoi.LoadStep();
 		timer.ResetClock();
 	}
-	else if (wnd.kbd.KeyIsPressed(VK_LEFT) && timer.GetTimeSinceLastRefresh() > 0.3f && hanoi.GetCS() > 0)
+	else if (wnd.kbd.KeyIsPressed(VK_LEFT) && timer.GetTimeSinceLastRefresh() > 0.3f && hanoi.GetCS() > -1)
 	{
 		hanoi.ChangeCurrentStep(-1);
 		hanoi.LoadStep();
