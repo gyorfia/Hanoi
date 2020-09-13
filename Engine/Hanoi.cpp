@@ -1,6 +1,9 @@
 #include "Hanoi.h"
 
-Hanoi::Hanoi(Graphics& gfx)
+Hanoi::Hanoi(Graphics& gfx, int nDisks, Mode mode)
+	:
+	nDisks(nDisks),
+	mode(mode)
 {
 	//assign pegxs
 	int pegSX = int (Graphics::ScreenWidth / 6);
@@ -11,58 +14,54 @@ Hanoi::Hanoi(Graphics& gfx)
 		pegSX += int (Graphics::ScreenWidth / 3);
 	}
 	//biggest disk size
-	const int firstW = int(Graphics::ScreenWidth / 6 - 1 - gap);
-	const int firstH = int((Graphics::ScreenHeight - topGap + (ceil(nDisks / 2) * nDisks) * heightChange) / nDisks);
-	const int firstBiCH = int((Graphics::ScreenHeight - topGap + ((ceil(nDisks / 2) * nDisks) * heightChange) / 2) / nDisks);
+	const int firstW = Graphics::ScreenWidth / 6 - 1 - gap;
+	const int firstH = (Graphics::ScreenHeight - topGap + ((int)ceil(nDisks / 2) * nDisks) * heightChange) / nDisks;
+	const int firstBiCH = (Graphics::ScreenHeight - topGap + (((int)ceil(nDisks / 2) * nDisks) * heightChange) / 2) / nDisks;
 	assert(0 < firstW - (nDisks - 1) * widthChange);
 	assert(0 < firstH - (nDisks - 1) * heightChange);
 	assert(0 < firstBiCH - (nDisks / 2 - 1) * heightChange);
 	//mode select
-	if (normHanoi)
+	switch (mode)
 	{
+	case Hanoi::Mode::normHanoi:
 		SetupNormHanoi(firstW, firstH);
 		NormalHanoi(nDisks, pegs[0], pegs[1], pegs[2]);
-	}
-	else if (doubleHanoi)
-	{
+		break;
+	case Hanoi::Mode::doubleHanoi:
 		SetupDoubleHanoi();
 		EnhancedDoubleHanoi(nDisks / 2, pegs[0], pegs[1], pegs[2]);
-	}
-	else if (mergeHanoi)
-	{
+		break;
+	case Hanoi::Mode::mergeHanoi:
 		SetupMergeHanoi();
 		MergeHanoi(nDisks / 2, pegs[0], pegs[1], pegs[2]);
-	}
-	else if (splitHanoi)
-	{
+		break;
+	case Hanoi::Mode::splitHanoi:
 		SetupSplitHanoi();
 		SplitHanoi(nDisks / 2, pegs[0], pegs[1], pegs[2]);
-	}
-	else if (baseSwapHanoi)
-	{
+		break;
+	case Hanoi::Mode::baseSwapHanoi:
 		SetupBaseSwapHanoi();
 		BaseSwapHanoi(nDisks / 2, pegs[0], pegs[1], pegs[2]);
-	}
-	else if (easyBicolorHanoi)
-	{
+		break;
+	case Hanoi::Mode::easyBicolorHanoi:
 		SetupEasyBicolorHanoi();
 		EasyBicolorHanoi(nDisks / 2, pegs[0], pegs[1], pegs[2]);
-	}
-	else if (bicolorHanoi)
-	{
+		break;
+	case Hanoi::Mode::bicolorHanoi:
 		SetupBicolorHanoi();
 		BicolorHanoi(nDisks / 2, pegs[0], pegs[1], pegs[2]);
+		break;
+	default:
+		break;
 	}
-
-	if (!normHanoi)
+	if (mode != Mode::normHanoi)
 		BicolorDiskSetup(firstW, firstBiCH);
 	LoadStep();
 }
 
 void Hanoi::FromAToB(Peg& A, Peg& B)
 {
-	std::array<int, 2> sS = {A.index, B.index};
-	steps.push_back(sS);
+	steps.emplace_back(std::array<int, 2>{ A.index, B.index });
 }
 
 void Hanoi::NormalHanoi(int n, Peg& A, Peg& B, Peg& Via)
@@ -181,9 +180,9 @@ void Hanoi::BicolorDiskSetup(const int firstW, const int firstH)
 	Color c[2] = {Colors::Blue, Colors::Red};
 	for (int i = 0; i < nDisks; i++)
 	{
-		disks[i].disk = Rect(0, 0, firstW - i * widthChange, firstH - i * heightChange, c[0]);
+		disks.emplace_back(Rect(0, 0, firstW - i * widthChange, firstH - i * heightChange, c[0]));
 		i++;
-		disks[i].disk = Rect(0, 0, firstW - (i-1) * widthChange, firstH - (i - 1) * heightChange, c[1]);
+		disks.emplace_back(Rect(0, 0, firstW - (i-1) * widthChange, firstH - (i - 1) * heightChange, c[1]));
 	}
 }
 
@@ -208,7 +207,7 @@ void Hanoi::SetupNormHanoi(const int firstW, const int firstH)
 			c = Color(rCol(rng), rCol(rng), rCol(rng));
 		else
 			c = Color(55 + cC * i, 0, 0);
-		disks[i].disk = Rect(0, 0, firstW - i * widthChange, firstH - i * heightChange, c);
+		disks.emplace_back(Rect{ 0, 0, firstW - i * widthChange, firstH - i * heightChange, c });
 	}
 }
 
@@ -299,7 +298,7 @@ int Hanoi::GetCS() const
 
 int Hanoi::GetMaxStep() const
 {
-	return steps.size() - 1;
+	return (int)steps.size() - 1;
 }
 
 void Hanoi::ChangeCurrentStep(int c)
@@ -325,7 +324,7 @@ void Hanoi::Draw(Graphics& gfx) const
 	}
 }
 
-void Hanoi::Disk::Init(const Rect& sRect)
-{
-	disk = sRect;
-}
+Hanoi::Disk::Disk(const Rect& sRect)
+	:
+	disk(sRect)
+{}

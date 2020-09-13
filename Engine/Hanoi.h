@@ -8,10 +8,22 @@
 
 class Hanoi
 {	
+public:
+	enum class Mode
+	{
+	normHanoi,
+	doubleHanoi,
+	mergeHanoi,
+	splitHanoi,
+	baseSwapHanoi,
+	easyBicolorHanoi,
+	bicolorHanoi
+	};
+private:
 	/* Variables: */
 	/************************************************************/
 	//Number of disks (in bicolor modes it covers col0 + col1)
-	static constexpr int nDisks = 8;
+	int nDisks;
 	//
 	const int gap = 20; //gap between pegs
 	const int topGap = 250; //gap between the top of the screen, and the top of the tower
@@ -19,19 +31,13 @@ class Hanoi
 	const int heightChange = 5;
 	bool randomColors = false; //only in normhanoi
 	//Modes:
-	bool normHanoi = false;
-	bool doubleHanoi = false;
-	bool mergeHanoi = false;
-	bool splitHanoi = false;
-	bool baseSwapHanoi = false;
-	bool easyBicolorHanoi = false;
-	bool bicolorHanoi = true;
+	Mode mode;
 	/************************************************************/
 private:
 	class Disk
 	{
 	public:
-		void Init(const Rect& sRect);
+		Disk(const Rect& sRect);
 	public:
 		Rect disk;
 	};
@@ -46,7 +52,7 @@ private:
 	};
 
 public:
-	Hanoi(Graphics& gfx);
+	Hanoi(Graphics& gfx, int nDisks = 6, Mode mode = Mode::normHanoi);
 	void LoadStep();
 	int GetCS() const;
 	int GetMaxStep() const;
@@ -75,6 +81,6 @@ private:
 private:
 	std::vector <std::array<int, 2>> steps;
 	int currentStep = -1;
-	Disk disks[nDisks];
+	std::vector<Disk> disks;
 	Peg pegs[3];
 };

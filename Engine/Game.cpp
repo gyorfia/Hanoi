@@ -25,9 +25,8 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	hanoi(gfx)
-{
-}
+	hanoi(gfx, 6, Hanoi::Mode::normHanoi)
+{}
 
 void Game::Go()
 {
