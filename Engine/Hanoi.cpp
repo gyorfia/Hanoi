@@ -177,7 +177,7 @@ void Hanoi::BicolorHanoi(int n, Peg& A, Peg& B, Peg& Via)
 
 void Hanoi::BicolorDiskSetup(const int firstW, const int firstH)
 {
-	Color c[2] = {Colors::Blue, Colors::Red};
+	Color c[2] = {Colors::Red, Colors::Black};
 	for (int i = 0; i < nDisks; i++)
 	{
 		disks.emplace_back(Rect(0, 0, firstW - i * widthChange, firstH - i * heightChange, c[0]));

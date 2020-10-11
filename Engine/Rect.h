@@ -13,6 +13,10 @@ public:
 		height(sH),
 		col(sC)
 	{}
+	Rect(Color sC)
+		:
+		Rect(Graphics::ScreenWidth/2, Graphics::ScreenHeight, Graphics::ScreenWidth/2, Graphics::ScreenHeight, sC)
+	{}
 
 	Rect() = default;
 

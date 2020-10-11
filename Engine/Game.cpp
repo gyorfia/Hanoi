@@ -25,7 +25,8 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	hanoi(gfx, 6, Hanoi::Mode::normHanoi)
+	hanoi(gfx, 8, Hanoi::Mode::doubleHanoi),
+	backg(Colors::White)
 {}
 
 void Game::Go()
@@ -54,5 +55,6 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
+	backg.Draw(gfx);
 	hanoi.Draw(gfx);
 }
