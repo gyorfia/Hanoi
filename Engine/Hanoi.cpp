@@ -9,7 +9,7 @@ Hanoi::Hanoi(Graphics& gfx, int nDisks, Mode mode)
 	int pegSX = int (Graphics::ScreenWidth / 6);
 	for (int i = 0; i < 3; i++)
 	{
-		pegs[i].x = pegSX;
+		pegs[i].peg.x = pegs[i].x = pegSX;
 		pegs[i].index = i;
 		pegSX += int (Graphics::ScreenWidth / 3);
 	}
@@ -318,6 +318,10 @@ void Hanoi::ChangeCurrentStep(int c)
 
 void Hanoi::Draw(Graphics& gfx) const
 {
+	for (int i = 0; i < 3; i++)
+	{
+		pegs[i].peg.Draw(gfx);
+	}
 	for (int i = 0; i < nDisks; i++)
 	{
 		disks[i].disk.Draw(gfx);

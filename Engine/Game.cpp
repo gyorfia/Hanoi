@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	hanoi(gfx, 8, Hanoi::Mode::doubleHanoi),
+	hanoi(gfx, 8, Hanoi::Mode::normHanoi ),
 	backg(Colors::White)
 {}
 

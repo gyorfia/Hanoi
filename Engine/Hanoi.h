@@ -26,7 +26,7 @@ private:
 	int nDisks;
 	//
 	const int gap = 20; //gap between pegs
-	const int topGap = 250; //gap between the top of the screen, and the top of the tower
+	static constexpr int topGap = 250; //gap between the top of the screen, and the top of the tower
 	const int widthChange = 20;
 	const int heightChange = 5;
 	bool randomColors = false; //only in normhanoi
@@ -41,7 +41,7 @@ private:
 	public:
 		Rect disk;
 	};
-
+	
 	class Peg
 	{
 	public:
@@ -49,6 +49,7 @@ private:
 		int index;
 		std::vector <int> highestPegI;
 		int currentHeight;
+		Rect peg = { 0, Graphics::ScreenHeight, 50, Graphics::ScreenHeight - topGap, Colors::MakeRGB(120, 120, 120) };
 	};
 
 public:

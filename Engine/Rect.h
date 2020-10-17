@@ -13,11 +13,6 @@ public:
 		height(sH),
 		col(sC)
 	{}
-	Rect(Color sC)
-		:
-		Rect(Graphics::ScreenWidth/2, Graphics::ScreenHeight, Graphics::ScreenWidth/2, Graphics::ScreenHeight, sC)
-	{}
-
 	Rect() = default;
 
 	void InitRect(const Rect& sRect)
@@ -31,7 +26,7 @@ public:
 		{
 			for (int j = x - halfWidth; j < x + halfWidth; j++)
 			{
-				gfx.PutPixel(j, i, Colors::White);
+				gfx.PutPixel(j, i, Colors::LightGray);
 			}
 		}
 		for (int i = y - height + 1; i < y - 1; i++)
@@ -48,4 +43,23 @@ public:
 	int halfWidth;
 	int height;
 	Color col;
+};
+
+class BackG : public Rect
+{
+public:
+	BackG(Color sC)
+		:
+		Rect(Graphics::ScreenWidth / 2, Graphics::ScreenHeight, Graphics::ScreenWidth / 2, Graphics::ScreenHeight, sC)
+	{}
+	void Draw(Graphics& gfx) const
+	{
+		for (int i = y - height; i < y; i++)
+		{
+			for (int j = x - halfWidth; j < x + halfWidth; j++)
+			{
+				gfx.PutPixel(j, i, col);
+			}
+		}
+	}
 };

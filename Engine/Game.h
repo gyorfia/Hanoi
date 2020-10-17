@@ -46,6 +46,6 @@ private:
 	/*  User Variables              */
 	Hanoi hanoi;
 	Timer timer;
-	Rect backg;
+	BackG backg;
 	/********************************/
 };
