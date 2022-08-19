@@ -315,19 +315,6 @@ void Graphics::EndFrame()
 	pImmediateContext->PSSetShaderResources( 0u,1u,pSysBufferTextureView.GetAddressOf() );
 	pImmediateContext->PSSetSamplers( 0u,1u,pSamplerState.GetAddressOf() );
 	pImmediateContext->Draw( 6u,0u );
-
-	// flip back/front buffers
-	if( FAILED( hr = pSwapChain->Present( 1u,0u ) ) )
-	{
-		if( hr == DXGI_ERROR_DEVICE_REMOVED )
-		{
-			throw CHILI_GFX_EXCEPTION( pDevice->GetDeviceRemovedReason(),L"Presenting back buffer [device removed]" );
-		}
-		else
-		{
-			throw CHILI_GFX_EXCEPTION( hr,L"Presenting back buffer" );
-		}
-	}
 }
 
 void Graphics::BeginFrame()

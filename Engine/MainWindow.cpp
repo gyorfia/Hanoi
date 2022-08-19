@@ -27,7 +27,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include <assert.h>
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, float imguiMouseScaleW, float imguiMouseScaleH);
 
 MainWindow::MainWindow( HINSTANCE hInst,wchar_t * pArgs )
 	:
@@ -49,9 +49,9 @@ MainWindow::MainWindow( HINSTANCE hInst,wchar_t * pArgs )
 	wr.right = Graphics::ScreenWidth + wr.left;
 	wr.top = 100;
 	wr.bottom = Graphics::ScreenHeight + wr.top;
-	AdjustWindowRect( &wr,WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,FALSE );
+	AdjustWindowRect( &wr,WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,FALSE );
 	hWnd = CreateWindow( wndClassName,L"Chili DirectX Framework",
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+		WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,
 		wr.left,wr.top,wr.right - wr.left,wr.bottom - wr.top,
 		nullptr,nullptr,hInst,this );
 
@@ -143,11 +143,12 @@ LRESULT WINAPI MainWindow::_HandleMsgThunk( HWND hWnd,UINT msg,WPARAM wParam,LPA
 
 LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 {
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam, imguiMouseScaleW, imguiMouseScaleH))
 	{
 		return true;
 	}
 	auto& imio = ImGui::GetIO();
+	int oW; int oH;
 
 	switch( msg )
 	{
@@ -157,6 +158,20 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 	case WM_KILLFOCUS:
 		kbd.ClearState();
 		break;
+	case WM_SIZE:
+
+		if (wParam != SIZE_MINIMIZED)
+		{
+			oW = displayWidth;
+			oH = displayHeight;
+			displayWidth = LOWORD(lParam);
+			displayHeight = HIWORD(lParam);
+			imio.DisplaySize = ImVec2((float)(displayWidth), (float)(displayHeight));
+			imguiMouseScaleW = (float(oW) / float(displayWidth)) * imguiMouseScaleW;
+			imguiMouseScaleH = (float(oH) / float(displayHeight)) * imguiMouseScaleH;
+		}
+		break;
+
 
 		// ************ KEYBOARD MESSAGES ************ //
 	case WM_KEYDOWN:

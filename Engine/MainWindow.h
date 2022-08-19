@@ -81,4 +81,8 @@ private:
 	static constexpr wchar_t* wndClassName = L"Chili DirectX Framework Window";
 	HINSTANCE hInst = nullptr;
 	std::wstring args;
+	float imguiMouseScaleW = 1.0f;
+	float imguiMouseScaleH = 1.0f;
+	int displayWidth = Graphics::ScreenWidth;
+	int displayHeight = Graphics::ScreenHeight;
 };
