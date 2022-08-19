@@ -22,6 +22,8 @@
 #include "Graphics.h"
 #include "DXErr.h"
 #include "ChiliException.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_dx11.h"
 #include <assert.h>
 #include <string>
 #include <array>
@@ -238,10 +240,13 @@ Graphics::Graphics( HWNDKey& key )
 	// allocate memory for sysbuffer (16-byte aligned for faster access)
 	pSysBuffer = reinterpret_cast<Color*>( 
 		_aligned_malloc( sizeof( Color ) * Graphics::ScreenWidth * Graphics::ScreenHeight,16u ) );
+
+	ImGui_ImplDX11_Init(pDevice.Get(), pImmediateContext.Get());
 }
 
 Graphics::~Graphics()
 {
+	ImGui_ImplDX11_Shutdown();
 	// free sysbuffer memory (aligned free)
 	if( pSysBuffer )
 	{
@@ -255,6 +260,30 @@ Graphics::~Graphics()
 void Graphics::EndFrame()
 {
 	HRESULT hr;
+	static UINT presentFlags = 0u;
+
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	// imgui works after minimizing the window
+	hr = pSwapChain->Present(1u, presentFlags);
+	if (hr == DXGI_STATUS_OCCLUDED) {
+		presentFlags = DXGI_PRESENT_TEST;
+		Sleep(20);
+	}
+	else if (FAILED(hr))
+	{
+		if (hr == DXGI_ERROR_DEVICE_REMOVED)
+		{
+			throw CHILI_GFX_EXCEPTION(pDevice->GetDeviceRemovedReason(), L"Device removed");
+		}
+		else
+		{
+			throw CHILI_GFX_EXCEPTION(hr, L"Present failed");
+		}
+	}
+	else {
+		presentFlags = 0;
+	}
 
 	// lock and map the adapter memory for copying over the sysbuffer
 	if( FAILED( hr = pImmediateContext->Map( pSysBufferTexture.Get(),0u,
@@ -305,6 +334,8 @@ void Graphics::BeginFrame()
 {
 	// clear the sysbuffer
 	memset( pSysBuffer,0u,sizeof( Color ) * Graphics::ScreenHeight * Graphics::ScreenWidth );
+
+	ImGui_ImplDX11_NewFrame();
 }
 
 void Graphics::PutPixel( int x,int y,Color c )

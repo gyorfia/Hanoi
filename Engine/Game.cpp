@@ -20,6 +20,9 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
 
 Game::Game( MainWindow& wnd )
 	:
@@ -31,7 +34,8 @@ Game::Game( MainWindow& wnd )
 
 void Game::Go()
 {
-	gfx.BeginFrame();	
+	gfx.BeginFrame();
+	wnd.ImGuiNewFrame();
 	UpdateModel();
 	ComposeFrame();
 	gfx.EndFrame();
@@ -39,6 +43,8 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	ImGui::Text("Hello, world!");
+
 	if (wnd.kbd.KeyIsPressed(VK_RIGHT) && timer.GetTimeSinceLastRefresh() > 0.3f && hanoi.GetCS() < hanoi.GetMaxStep())
 	{
 		hanoi.ChangeCurrentStep(1);

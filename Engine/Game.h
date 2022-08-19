@@ -42,10 +42,8 @@ private:
 private:
 	MainWindow& wnd;
 	Graphics gfx;
-	/********************************/
-	/*  User Variables              */
 	Hanoi hanoi;
 	Timer timer;
 	BackG backg;
-	/********************************/
+	bool yes = false;
 };

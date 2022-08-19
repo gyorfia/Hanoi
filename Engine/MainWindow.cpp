@@ -23,7 +23,11 @@
 #include "Graphics.h"
 #include "ChiliException.h"
 #include "Game.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_win32.h"
 #include <assert.h>
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 MainWindow::MainWindow( HINSTANCE hInst,wchar_t * pArgs )
 	:
@@ -58,6 +62,8 @@ MainWindow::MainWindow( HINSTANCE hInst,wchar_t * pArgs )
 			L"Failed to get valid window handle." );
 	}
 
+	ImGui_ImplWin32_Init(hWnd);
+
 	// show and update
 	ShowWindow( hWnd,SW_SHOWDEFAULT );
 	UpdateWindow( hWnd );
@@ -65,8 +71,15 @@ MainWindow::MainWindow( HINSTANCE hInst,wchar_t * pArgs )
 
 MainWindow::~MainWindow()
 {
+	ImGui_ImplWin32_Shutdown();
 	// unregister window class
 	UnregisterClass( wndClassName,hInst );
+}
+
+void MainWindow::MainWindow::ImGuiNewFrame() const
+{
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
 }
 
 bool MainWindow::IsActive() const
@@ -130,6 +143,12 @@ LRESULT WINAPI MainWindow::_HandleMsgThunk( HWND hWnd,UINT msg,WPARAM wParam,LPA
 
 LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+	{
+		return true;
+	}
+	auto& imio = ImGui::GetIO();
+
 	switch( msg )
 	{
 	case WM_DESTROY:
@@ -141,15 +160,21 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 
 		// ************ KEYBOARD MESSAGES ************ //
 	case WM_KEYDOWN:
+		if (imio.WantCaptureKeyboard)
+			break;
 		if( !(lParam & 0x40000000) || kbd.AutorepeatIsEnabled() ) // no thank you on the autorepeat
 		{
 			kbd.OnKeyPressed( static_cast<unsigned char>(wParam) );
 		}
 		break;
 	case WM_KEYUP:
+		if (imio.WantCaptureKeyboard)
+			break;
 		kbd.OnKeyReleased( static_cast<unsigned char>(wParam) );
 		break;
 	case WM_CHAR:
+		if (imio.WantCaptureKeyboard)
+			break;
 		kbd.OnChar( static_cast<unsigned char>(wParam) );
 		break;
 		// ************ END KEYBOARD MESSAGES ************ //
@@ -157,6 +182,8 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 		// ************ MOUSE MESSAGES ************ //
 	case WM_MOUSEMOVE:
 	{
+		if (imio.WantCaptureMouse)
+			break;
 		POINTS pt = MAKEPOINTS( lParam );
 		if( pt.x > 0 && pt.x < Graphics::ScreenWidth && pt.y > 0 && pt.y < Graphics::ScreenHeight )
 		{
@@ -189,6 +216,8 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 	}
 	case WM_LBUTTONDOWN:
 	{
+		if (imio.WantCaptureMouse)
+			break;
 		const POINTS pt = MAKEPOINTS( lParam );
 		mouse.OnLeftPressed( pt.x,pt.y );
 		SetForegroundWindow( hWnd );
@@ -196,24 +225,32 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 	}
 	case WM_RBUTTONDOWN:
 	{
+		if (imio.WantCaptureMouse)
+			break;
 		const POINTS pt = MAKEPOINTS( lParam );
 		mouse.OnRightPressed( pt.x,pt.y );
 		break;
 	}
 	case WM_LBUTTONUP:
 	{
+		if (imio.WantCaptureMouse)
+			break;
 		const POINTS pt = MAKEPOINTS( lParam );
 		mouse.OnLeftReleased( pt.x,pt.y );
 		break;
 	}
 	case WM_RBUTTONUP:
 	{
+		if (imio.WantCaptureMouse)
+			break;
 		const POINTS pt = MAKEPOINTS( lParam );
 		mouse.OnRightReleased( pt.x,pt.y );
 		break;
 	}
 	case WM_MOUSEWHEEL:
 	{
+		if (imio.WantCaptureMouse)
+			break;
 		const POINTS pt = MAKEPOINTS( lParam );
 		if( GET_WHEEL_DELTA_WPARAM( wParam ) > 0 )
 		{

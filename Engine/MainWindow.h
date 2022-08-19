@@ -24,6 +24,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "ChiliException.h"
+#include "imguiManager.h"
 #include <string>
 
 // for granting special access to hWnd only for Graphics constructor
@@ -50,10 +51,12 @@ public:
 		virtual std::wstring GetExceptionType() const override { return L"Windows Exception"; }
 	};
 public:
+	imguiManager imguiM;
 	MainWindow( HINSTANCE hInst,wchar_t* pArgs );
 	MainWindow( const MainWindow& ) = delete;
 	MainWindow& operator=( const MainWindow& ) = delete;
 	~MainWindow();
+	void ImGuiNewFrame() const;
 	bool IsActive() const;
 	bool IsMinimized() const;
 	void ShowMessageBox( const std::wstring& title,const std::wstring& message,UINT type = MB_OK ) const;
