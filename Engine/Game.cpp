@@ -28,7 +28,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	hanoi(gfx, 8, Hanoi::Mode::normHanoi ),
+	pHanoi( new Hanoi{8, Hanoi::Mode::normHanoi} ),
 	backg(Colors::White)
 {}
 
@@ -43,24 +43,67 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	ImGui::Text("Hello, world!");
-
-	if (wnd.kbd.KeyIsPressed(VK_RIGHT) && timer.GetTimeSinceLastRefresh() > 0.3f && hanoi.GetCS() < hanoi.GetMaxStep())
+	// IMGUI BEGIN
+	/*static bool demo = true;
+	if (demo)
+		ImGui::ShowDemoWindow(&demo);*/
+	ImGui::Begin("Hanoi control panel");
+	// Combo
+	if (ImGui::Combo("Mode", &PM.comboMode, "Normal_Hanoi\0Double_Hanoi\0Merge_Hanoi\0Split_Hanoi\0Base_Swap_Hanoi\0Easy_Bicolor_Hanoi\0Bicolor_Hanoi\0"))
+		PM.newParams = true;
+	// Number of Disks
+	if ((Hanoi::Mode)PM.comboMode == Hanoi::Mode::normHanoi)
 	{
-		hanoi.ChangeCurrentStep(1);
-		hanoi.LoadStep();
+		if (ImGui::InputInt("Disks", &PM.nDisksNormal, 1, 50))
+			PM.newParams = true;
+	}
+	else
+	{
+		if (ImGui::InputInt("Disks", &PM.nDisksBiC, 2, 50))
+			PM.newParams = true;
+	}
+	// Progress Bar
+	double progress = ((double)pHanoi->GetCS() + 1)/ ((double)pHanoi->GetMaxStep() + 1);
+	char buf[32];
+	sprintf(buf, "%d/%d", (int)(pHanoi->GetCS()) + 1, pHanoi->GetMaxStep() + 1);
+	ImGui::ProgressBar(progress, ImVec2(0.0f, 0.f), buf);
+	ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
+	ImGui::Text("Progress");
+	// FPS
+	ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+	ImGui::End();
+
+	// IMGUI END
+
+	if (wnd.kbd.KeyIsPressed(VK_RIGHT) && timer.GetTimeSinceLastRefresh() > 0.3f && pHanoi->GetCS() < pHanoi->GetMaxStep())
+	{
+		pHanoi->ChangeCurrentStep(1);
+		pHanoi->LoadStep();
 		timer.ResetClock();
 	}
-	else if (wnd.kbd.KeyIsPressed(VK_LEFT) && timer.GetTimeSinceLastRefresh() > 0.3f && hanoi.GetCS() > -1)
+	else if (wnd.kbd.KeyIsPressed(VK_LEFT) && timer.GetTimeSinceLastRefresh() > 0.3f && pHanoi->GetCS() > -1)
 	{
-		hanoi.ChangeCurrentStep(-1);
-		hanoi.LoadStep();
+		pHanoi->ChangeCurrentStep(-1);
+		pHanoi->LoadStep();
 		timer.ResetClock();
+	}
+	if (PM.newParams)
+	{
+		PM.ClampValues();
+		if ((Hanoi::Mode)PM.comboMode == Hanoi::Mode::normHanoi)
+		{
+			pHanoi = std::make_unique<Hanoi>(PM.nDisksNormal, (Hanoi::Mode)PM.comboMode);
+		}
+		else
+		{
+			pHanoi = std::make_unique<Hanoi>(PM.nDisksBiC, (Hanoi::Mode)PM.comboMode);
+		}
+		PM.newParams = false;
 	}
 }
 
 void Game::ComposeFrame()
 {
 	backg.Draw(gfx);
-	hanoi.Draw(gfx);
+	pHanoi->Draw(gfx);
 }

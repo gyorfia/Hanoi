@@ -1,6 +1,7 @@
+#include <algorithm>
 #include "Hanoi.h"
 
-Hanoi::Hanoi(Graphics& gfx, int nDisks, Mode mode)
+Hanoi::Hanoi(int nDisks, Mode mode)
 	:
 	nDisks(nDisks),
 	mode(mode)
@@ -332,3 +333,13 @@ Hanoi::Disk::Disk(const Rect& sRect)
 	:
 	disk(sRect)
 {}
+
+void HanoiPM::ClampValues()
+{
+	if (nDisksBiC % 2 == 1)
+	{
+		nDisksBiC -= 1;
+	}
+	nDisksNormal = std::clamp(nDisksNormal, nClampMin, nClampMax);
+	nDisksBiC = std::clamp(nDisksBiC, nClampMin, nClampMax);
+}

@@ -20,6 +20,7 @@
  ******************************************************************************************/
 #pragma once
 
+#include <memory>
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
@@ -45,5 +46,6 @@ private:
 	Hanoi hanoi;
 	Timer timer;
 	BackG backg;
-	bool yes = false;
+	std::unique_ptr<Hanoi> pHanoi;
+	HanoiPM PM;
 };

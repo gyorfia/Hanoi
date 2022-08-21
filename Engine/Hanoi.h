@@ -6,6 +6,20 @@
 #include "Rect.h"
 #include "Graphics.h"
 
+struct HanoiPM // Hanoi Parameter Manager
+{
+public:
+	void ClampValues();
+public:
+	bool newParams = false;
+	int comboMode = 0;
+	int nDisksNormal = 8;
+	int nDisksBiC = 8;
+private:
+	int nClampMin = 2;
+	int nClampMax = 14;
+};
+
 class Hanoi
 {	
 public:
@@ -17,7 +31,8 @@ public:
 	splitHanoi,
 	baseSwapHanoi,
 	easyBicolorHanoi,
-	bicolorHanoi
+	bicolorHanoi,
+	size
 	};
 private:
 	/* Variables: */
@@ -53,7 +68,7 @@ private:
 	};
 
 public:
-	Hanoi(Graphics& gfx, int nDisks = 6, Mode mode = Mode::normHanoi);
+	Hanoi(int nDisks = 6, Mode mode = Mode::normHanoi);
 	void LoadStep();
 	int GetCS() const;
 	int GetMaxStep() const;
