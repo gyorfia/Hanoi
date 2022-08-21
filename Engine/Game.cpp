@@ -48,6 +48,7 @@ void Game::UpdateModel()
 	if (demo)
 		ImGui::ShowDemoWindow(&demo);*/
 	ImGui::Begin("Hanoi control panel");
+	ImGui::SetWindowFontScale(1.8f);
 	// Combo
 	if (ImGui::Combo("Mode", &PM.comboMode, "Normal_Hanoi\0Double_Hanoi\0Merge_Hanoi\0Split_Hanoi\0Base_Swap_Hanoi\0Easy_Bicolor_Hanoi\0Bicolor_Hanoi\0"))
 		PM.newParams = true;
@@ -65,7 +66,7 @@ void Game::UpdateModel()
 	// Progress Bar
 	double progress = ((double)pHanoi->GetCS() + 1)/ ((double)pHanoi->GetMaxStep() + 1);
 	char buf[32];
-	sprintf(buf, "%d/%d", (int)(pHanoi->GetCS()) + 1, pHanoi->GetMaxStep() + 1);
+	sprintf_s(buf, "%d/%d", (int)(pHanoi->GetCS()) + 1, pHanoi->GetMaxStep() + 1);
 	ImGui::ProgressBar(progress, ImVec2(0.0f, 0.f), buf);
 	ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
 	ImGui::Text("Progress");

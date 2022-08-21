@@ -17,7 +17,7 @@ public:
 	int nDisksBiC = 8;
 private:
 	int nClampMin = 2;
-	int nClampMax = 14;
+	int nClampMax = 24;
 };
 
 class Hanoi
@@ -42,8 +42,8 @@ private:
 	//
 	const int gap = 20; //gap between pegs
 	static constexpr int topGap = 250; //gap between the top of the screen, and the top of the tower
-	const int widthChange = 20;
-	const int heightChange = 5;
+	float widthChange = 0.0f;
+	const float heightChange = 0.0f;
 	bool randomColors = false; //only in normhanoi
 	//Modes:
 	Mode mode;
@@ -68,7 +68,7 @@ private:
 	};
 
 public:
-	Hanoi(int nDisks = 6, Mode mode = Mode::normHanoi);
+	Hanoi(int nDisks = 8, Mode mode = Mode::normHanoi);
 	void LoadStep();
 	int GetCS() const;
 	int GetMaxStep() const;

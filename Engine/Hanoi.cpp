@@ -16,11 +16,13 @@ Hanoi::Hanoi(int nDisks, Mode mode)
 	}
 	//biggest disk size
 	const int firstW = Graphics::ScreenWidth / 6 - 1 - gap;
-	const int firstH = (Graphics::ScreenHeight - topGap + ((int)ceil(nDisks / 2) * nDisks) * heightChange) / nDisks;
-	const int firstBiCH = (Graphics::ScreenHeight - topGap + (((int)ceil(nDisks / 2) * nDisks) * heightChange) / 2) / nDisks;
-	assert(0 < firstW - (nDisks - 1) * widthChange);
+	const int firstH = (Graphics::ScreenHeight - topGap + ((nDisks * (nDisks - 1.0f)) / 2) * heightChange) / nDisks + 1;
+	const int firstBiCH = ((Graphics::ScreenHeight - topGap + ((nDisks * (nDisks - 1.0f)) / 2) * heightChange)) / nDisks + 1;
 	assert(0 < firstH - (nDisks - 1) * heightChange);
 	assert(0 < firstBiCH - (nDisks / 2 - 1) * heightChange);
+	// width change
+	widthChange = (firstW-100.0f) / (nDisks);
+
 	//mode select
 	switch (mode)
 	{
@@ -181,9 +183,9 @@ void Hanoi::BicolorDiskSetup(const int firstW, const int firstH)
 	Color c[2] = {Colors::Red, Colors::Black};
 	for (int i = 0; i < nDisks; i++)
 	{
-		disks.emplace_back(Rect(0, 0, firstW - i * widthChange, firstH - i * heightChange, c[0]));
+		disks.emplace_back(Rect(0, 0, int(firstW - i * widthChange), int(firstH - i * heightChange), c[0]));
 		i++;
-		disks.emplace_back(Rect(0, 0, firstW - (i-1) * widthChange, firstH - (i - 1) * heightChange, c[1]));
+		disks.emplace_back(Rect(0, 0, int(firstW - (i-1) * widthChange), int(firstH - (i - 1) * heightChange), c[1]));
 	}
 }
 
@@ -208,7 +210,7 @@ void Hanoi::SetupNormHanoi(const int firstW, const int firstH)
 			c = Color(rCol(rng), rCol(rng), rCol(rng));
 		else
 			c = Color(55 + cC * i, 0, 0);
-		disks.emplace_back(Rect{ 0, 0, firstW - i * widthChange, firstH - i * heightChange, c });
+		disks.emplace_back(Rect{ 0, 0, int(firstW - i * widthChange), int(firstH - i * heightChange), c });
 	}
 }
 
