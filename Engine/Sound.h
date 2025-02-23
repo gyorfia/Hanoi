@@ -83,13 +83,13 @@ private:
 		static const wchar_t* GetDllPath( LoadType type );
 	private:
 		HMODULE hModule = 0;
-		static constexpr wchar_t* systemPath = L"XAudio2_7.dll";
+		static constexpr const wchar_t* systemPath = L"XAudio2_7.dll";
 #ifdef _M_X64
-		static constexpr wchar_t* folderPath = L"XAudio\\XAudio2_7_64.dll";
-		static constexpr wchar_t* localPath = L"XAudio2_7_64.dll";
+		static constexpr const wchar_t* folderPath = L"XAudio\\XAudio2_7_64.dll";
+		static constexpr const wchar_t* localPath = L"XAudio2_7_64.dll";
 #else
-		static constexpr wchar_t* folderPath = L"XAudio\\XAudio2_7_32.dll";
-		static constexpr wchar_t* localPath = L"XAudio2_7_32.dll";
+		static constexpr const wchar_t* folderPath = L"XAudio\\XAudio2_7_32.dll";
+		static constexpr const wchar_t* localPath = L"XAudio2_7_32.dll";
 #endif
 	};
 public:
